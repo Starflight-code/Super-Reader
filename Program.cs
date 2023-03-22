@@ -1,36 +1,44 @@
 ﻿/* Manifest file keeps track of every active project, first line is total active projects.
- * Next lines are project name, total paragraphs in project and paragraphs finished. This then repeats until all projects are documented in the manifest. */
+ * Next lines are project name, total paragraphs in project and paragraphs finished. This then repeats until all
+ * projects are documented in the manifest. */
 
 string configPath = ".\\config.db";
 string? mainFolderPath = null;
 string manifestPath;
 
-void generateConfig(string configPath) { 
+void generateConfig(string configPath)
+{
     Console.Clear();
     Console.Write("The main folder will be used for storing data from this application.\n" +
-        "You will be asked to enter a full path to your desired folder. Ex. C:\\Users\\your_username\\..." + 
-        "You may also leave this blank, and the current location of the program will be used.");
+                  "You will be asked to enter a full path to your desired folder. Ex. C:\\Users\\your_username\\..." +
+                  "You may also leave this blank, and the current location of the program will be used.");
     Console.Write("\n\nEnter your full main folder path: ");
     string? mainFolder = Console.ReadLine();
-    if (mainFolder == null) { mainFolder = ""; }
+    if (mainFolder == null)
+    {
+        mainFolder = "";
+    }
     mainFolder = mainFolder.Trim();
-    if (mainFolder == null || mainFolder == "") {
+    if (mainFolder == null || mainFolder == "")
+    {
         mainFolder = Directory.GetCurrentDirectory();
-    } else {
-        mainFolder = Path.GetFullPath(mainFolder); 
+    }
+    else
+    {
+        mainFolder = Path.GetFullPath(mainFolder);
         Directory.CreateDirectory(mainFolder);
     }
     Console.Clear();
     Console.Write("Generating configuration file in the same folder as the program, this will only take a second.");
     var db = File.Create(configPath);
     db.Dispose();
-    string[] configToWrite = {mainFolder};
+    string[] configToWrite = { mainFolder };
     var dbt = File.WriteAllLinesAsync(configPath, configToWrite);
     dbt.Wait(500);
     dbt.Dispose();
     var m = File.Create(mainFolder + "\\manifest.db");
     m.Dispose();
-    string[] manifestToWrite = {"0"};
+    string[] manifestToWrite = { "0" };
     var mt = File.WriteAllLinesAsync(mainFolder + "\\manifest.db", manifestToWrite);
     Console.Write("\nCompleted, program description: ");
     Console.Write("\nThis program was created to help users get the most out of reading long, complex" +
@@ -40,11 +48,12 @@ void generateConfig(string configPath) {
                   "\nmost critical parts/ideas is the key. This helps you retain the information you read." +
                   "\n----------------------------PRESS ENTER TO CONTINUE----------------------------\n");
     Console.ReadLine();
-
 }
-void fileWrite(string path, string[] content, char mode='w') {
+void fileWrite(string path, string[] content, char mode = 'w')
+{
     System.Threading.Tasks.Task fileTracker;
-    switch (mode) {
+    switch (mode)
+    {
         case 'w':
             fileTracker = File.WriteAllLinesAsync(path, content);
             break;
@@ -58,15 +67,22 @@ void fileWrite(string path, string[] content, char mode='w') {
     fileTracker.Wait(1000);
     fileTracker.Dispose();
 }
-string inputValidator(string question, string rejectionResponse = "Input is invalid, try again.") {
+string inputValidator(string question, string rejectionResponse = "Input is invalid, try again.")
+{
     string? output = null;
-while (output == null || output == "") { 
-    Console.Write(question + "\n$> ");
-    output = Console.ReadLine();
-    if (output == null || output == "") { Console.WriteLine("\n" + rejectionResponse); } }
+    while (output == null || output == "")
+    {
+        Console.Write(question + "\n$> ");
+        output = Console.ReadLine();
+        if (output == null || output == "")
+        {
+            Console.WriteLine("\n" + rejectionResponse);
+        }
+    }
     return output.Trim();
 }
-void manifestUpdator(string manifestPath, string projectName, string newParagraphsFinsihed = "0", bool archive = false) {
+void manifestUpdator(string manifestPath, string projectName, string newParagraphsFinsihed = "0", bool archive = false)
+{
     string[] manifestContent = File.ReadAllLines(manifestPath);
     string[] manifestFile = File.ReadAllLines(manifestPath); // Imports manifest data
     int i = 0;
@@ -75,7 +91,9 @@ void manifestUpdator(string manifestPath, string projectName, string newParagrap
     List<string> projectFinsihedParagraphs = new List<string>();
     foreach (string line in manifestFile)
     {
-        if (i == 0) {}
+        if (i == 0)
+        {
+        }
         else
         {
             switch (i % 3)
@@ -94,15 +112,24 @@ void manifestUpdator(string manifestPath, string projectName, string newParagrap
         i++;
     } // End of import
     int foundIndex = -1;
-    for (i = 0; i < projectNames.Count(); i++) {
-        if (projectNames[i].Trim() == projectName.Trim()) { foundIndex = i; break; }
-}
-    if (foundIndex == -1) {
+    for (i = 0; i < projectNames.Count(); i++)
+    {
+        if (projectNames[i].Trim() == projectName.Trim())
+        {
+            foundIndex = i;
+            break;
+        }
+    }
+    if (foundIndex == -1)
+    {
         return;
-    } else {
+    }
+    else
+    {
         projectFinsihedParagraphs[foundIndex] = newParagraphsFinsihed;
         int currentProjects = Int32.Parse(manifestFile[0].Trim());
-        if (archive) {
+        if (archive)
+        {
             currentProjects -= 1;
             projectNames.RemoveAt(foundIndex);
             projectParagraphs.RemoveAt(foundIndex);
@@ -119,22 +146,25 @@ void manifestUpdator(string manifestPath, string projectName, string newParagrap
         fileWrite(manifestPath, writeToFile.ToArray());
     }
 }
-void createProject(string manifestPath, string mainFolderPath) {
+void createProject(string manifestPath, string mainFolderPath)
+{
     Console.Clear();
     Console.WriteLine("Enter a project name, which will be used in the list and file name.");
     Console.Write("\nProject Name: ");
     string? projectName = Console.ReadLine();
-    if (projectName == null || projectName == "") {
+    if (projectName == null || projectName == "")
+    {
         Console.WriteLine("\nProject Name can not be blank. Exiting project creation wizard.");
         Thread.Sleep(3000);
         Console.Clear();
-        return; 
+        return;
     }
     Console.Clear();
     Console.WriteLine("How many paragraphs are in the text?");
     Console.Write("\nParagraphs: ");
     string? totalParagraphs = Console.ReadLine();
-    if (totalParagraphs == null || totalParagraphs == "") {
+    if (totalParagraphs == null || totalParagraphs == "")
+    {
         Console.WriteLine("\nParagraphs can not be blank. Exiting project creation wizard.");
         Thread.Sleep(3000);
         Console.Clear();
@@ -151,7 +181,8 @@ void createProject(string manifestPath, string mainFolderPath) {
     Console.WriteLine($"Project {projectName} created with {totalParagraphs} paragraphs.");
 }
 
-void listProjects(string manifestPath) {
+void listProjects(string manifestPath)
+{
     string[] manifestFile = File.ReadAllLines(manifestPath);
     int i = 0;
     List<string> projectNames = new List<string>();
@@ -159,7 +190,9 @@ void listProjects(string manifestPath) {
     List<string> projectFinsihedParagraphs = new List<string>();
     foreach (string line in manifestFile)
     {
-        if (i == 0) { }
+        if (i == 0)
+        {
+        }
         else
         {
             switch (i % 3)
@@ -191,11 +224,17 @@ void listProjects(string manifestPath) {
     }
 }
 
-void openProject(List<string> projectNames, List<string> projectParagraphs, List<string> projectFinishedParagraphs, string inputName) {
+void openProject(List<string> projectNames, List<string> projectParagraphs, List<string> projectFinishedParagraphs,
+                 string inputName)
+{
     int foundIndex = -1;
     for (int i = 0; i < projectNames.Count(); i++)
     {
-        if (projectNames[i].Trim() == inputName.Trim()) { foundIndex = i; break; }
+        if (projectNames[i].Trim() == inputName.Trim())
+        {
+            foundIndex = i;
+            break;
+        }
     }
     if (foundIndex == -1)
     {
@@ -234,25 +273,38 @@ void openProject(List<string> projectNames, List<string> projectParagraphs, List
             {
                 readableHeader.Add($"Paragraph {readableHeader.Count() + 1}/{paragraphTotal}");
                 lastParagraphAnalysis.Add("No Analysis Required (for first 2 paragraphs)");
-                userIn = inputValidator($"(Paragraph {readableHeader.Count}) Summarize the paragraph in a single sentence. ('save' to exit)");
-                if (userIn == "save") { earlyExit = true; break; }
+                userIn = inputValidator($"(Paragraph {readableHeader.Count}) Summarize the paragraph in a single " +
+                                          "sentence. ('save' to exit)");
+                if (userIn == "save")
+                {
+                    earlyExit = true;
+                    break;
+                }
                 singleParagraphReflection.Add(userIn);
                 Console.WriteLine();
-
             }
             else
             {
                 readableHeader.Add($"Paragraph {readableHeader.Count() + 1}/{paragraphTotal}");
-                userIn = inputValidator($"(Paragraph {readableHeader.Count}) Summarize all text before your current paragraph in a single sentence. ('save' to exit)");
-                if (userIn == "save") { earlyExit = true; break; }
+                userIn = inputValidator($"(Paragraph {readableHeader.Count}) Summarize all text before your current " +
+                                          "paragraph in a single sentence. ('save' to exit)");
+                if (userIn == "save")
+                {
+                    earlyExit = true;
+                    break;
+                }
                 lastParagraphAnalysis.Add(userIn);
                 Console.WriteLine();
-                userIn = inputValidator($"(Paragraph {readableHeader.Count}) Summarize the paragraph in a single sentence. ('save' to exit)");
-                if (userIn == "save") { earlyExit = true; break; }
+                userIn = inputValidator($"(Paragraph {readableHeader.Count}) Summarize the paragraph in a single " +
+                                          "sentence. ('save' to exit)");
+                if (userIn == "save")
+                {
+                    earlyExit = true;
+                    break;
+                }
                 singleParagraphReflection.Add(userIn);
                 Console.WriteLine();
             }
-
         }
         if (earlyExit)
         {
@@ -281,28 +333,44 @@ void openProject(List<string> projectNames, List<string> projectParagraphs, List
         }
         else
         {
-            string archive = inputValidator("Congratulations, you finished this project. Would you like to archive it? (y/n)").ToLower();
+            string archive =
+                inputValidator("Congratulations, you finished this project. Would you like to archive it? (y/n)")
+                    .ToLower();
             bool a = false;
-            if (archive == "y") { a = true; }
-            else { a = false; }
+            if (archive == "y")
+            {
+                a = true;
+            }
+            else
+            {
+                a = false;
+            }
             manifestUpdator(manifestPath, projectName, paragraphTotal.ToString(), a);
         }
     }
 }
-void projectUnarchive(string mainFolderPath, string manifestPath, string projectName) {
+void projectUnarchive(string mainFolderPath, string manifestPath, string projectName)
+{
     string projectPath = $"{mainFolderPath}\\{projectName.ToLower()}.txt";
-    if (!File.Exists(projectPath)) { // If file can not be found, return with error.
+    if (!File.Exists(projectPath))
+    { // If file can not be found, return with error.
         Console.WriteLine("\nProject could not be located, make sure it's in the main folder and the name is correct.");
         return;
     }
     string[] projectContent = File.ReadAllLines(projectPath);
-    if (projectContent.Length < 2) {
-        string input = inputValidator("Project is empty and can not be recoved. Remove this file and start creation wizard? (y/n)").ToLower();
-        if (input == "y") {
+    if (projectContent.Length < 2)
+    {
+        string input =
+            inputValidator("Project is empty and can not be recoved. Remove this file and start creation wizard? (y/n)")
+                .ToLower();
+        if (input == "y")
+        {
             File.Delete(projectPath);
             createProject(manifestPath, mainFolderPath);
             return;
-        } else {
+        }
+        else
+        {
             return;
         }
     }
@@ -311,19 +379,22 @@ void projectUnarchive(string mainFolderPath, string manifestPath, string project
     string[] desiredContent = temp[1].Split("/");
     string finishedParagraphs = desiredContent[0];
     string totalParagraphs = desiredContent[1];
-    string[] append = { projectName, totalParagraphs, finishedParagraphs }; // projectName, totalParagraphs, paragraphs finished
+    string[] append = {projectName, totalParagraphs,
+                       finishedParagraphs}; // projectName, totalParagraphs, paragraphs finished
     fileWrite(manifestPath, append.ToArray(), 'a');
     string[] manifestFile = File.ReadAllLines(manifestPath);
     manifestFile[0] = (Int32.Parse(manifestFile[0].Trim()) + 1).ToString(); // Iterates current number of projects
     fileWrite(manifestPath, manifestFile.ToArray());
     return;
-
 }
 
-if(File.Exists(configPath)) {
+if (File.Exists(configPath))
+{
     string[] configContent = File.ReadAllLines(configPath);
     mainFolderPath = configContent[0];
-} else { 
+}
+else
+{
     generateConfig(configPath);
     string[] configContent = File.ReadAllLines(configPath);
     mainFolderPath = configContent[0];
@@ -331,22 +402,27 @@ if(File.Exists(configPath)) {
 }
 string time;
 int timeNow = DateTime.Now.Hour;
-if (timeNow < 12) {
+if (timeNow < 12)
+{
     time = "Morning";
-} else if (timeNow < 18) {
+}
+else if (timeNow < 18)
+{
     time = "Afternoon";
-} else {
+}
+else
+{
     time = "Evening";
 };
 manifestPath = mainFolderPath + "\\manifest.db";
 
-if (!File.Exists(manifestPath)) {
+if (!File.Exists(manifestPath))
+{
     var m = File.Create(mainFolderPath + "\\manifest.db");
     m.Dispose();
     string[] manifestToWrite = { "0" };
     var mt = File.WriteAllLinesAsync(mainFolderPath + "\\manifest.db", manifestToWrite);
     Console.Write("\nCompleted, starting program.");
-
 }
 string[] manifestContent = File.ReadAllLines(manifestPath);
 string[] manifestFile = File.ReadAllLines(manifestPath); // Imports manifest data
@@ -356,9 +432,11 @@ List<string> projectParagraphs = new List<string>();
 List<string> projectFinsihedParagraphs = new List<string>();
 foreach (string line in manifestFile)
 {
-    if (i == 0) {}
-    else {
-        switch (i % 3) {
+    if (i == 0) { }
+    else
+    {
+        switch (i % 3)
+        {
             case 1:
                 projectNames.Add(line);
                 break;
@@ -376,74 +454,85 @@ Console.Clear();
 Console.Write($"\nGood {time.ToLower()}, there are {manifestContent[0]} active readings to work on.");
 Console.WriteLine("\nEnter 'help' to view current commands.");
 bool noExit = true;
-while (noExit == true) {
-//Console.Write("\n\n$>> ");
-string? input = inputValidator("");
-if (input == null) { input = "N/A"; }
-string[] inputArray = input.Split(" ");
-switch(inputArray[0]) {
-    case "help":
-        Console.WriteLine("\nCurrently available commands: ");
-        Console.WriteLine("help - displays list of currently available commands");
-        Console.WriteLine("create - creates a new reading project");
-        Console.WriteLine("open - opens a current reading project");
-        Console.WriteLine("archive - marks a current reading project as inactive (removes from list)");
-        Console.WriteLine("unarchive - marks an archived project as active");
-        Console.WriteLine("list - lists current reading projects");
-        Console.WriteLine("exit - exits the program");
-        break;
-    case "create":
-        createProject(manifestPath, mainFolderPath);
-        manifestContent = File.ReadAllLines(manifestPath);
-        manifestFile = File.ReadAllLines(manifestPath); // Imports manifest data
-        i = 0;
-        projectNames = new List<string>();
-        projectParagraphs = new List<string>();
-        projectFinsihedParagraphs = new List<string>();
-        foreach (string line in manifestFile)
-        {
-            if (i == 0) { }
-            else
-            {
-                switch (i % 3)
-                {
-                    case 1:
-                        projectNames.Add(line);
-                        break;
-                    case 2:
-                        projectParagraphs.Add(line);
-                        break;
-                    case 0:
-                        projectFinsihedParagraphs.Add(line);
-                        break;
-                }
-            }
-            i++;
-        } // End of import
+while (noExit == true)
+{
+    // Console.Write("\n\n$>> ");
+    string? input = inputValidator("");
+    if (input == null)
+    {
+        input = "N/A";
+    }
+    string[] inputArray = input.Split(" ");
+    switch (inputArray[0])
+    {
+        case "help":
+            Console.WriteLine("\nCurrently available commands: ");
+            Console.WriteLine("help - displays list of currently available commands");
+            Console.WriteLine("create - creates a new reading project");
+            Console.WriteLine("open - opens a current reading project");
+            Console.WriteLine("archive - marks a current reading project as inactive (removes from list)");
+            Console.WriteLine("unarchive - marks an archived project as active");
+            Console.WriteLine("list - lists current reading projects");
+            Console.WriteLine("exit - exits the program");
             break;
-    case "list":
+        case "create":
+            createProject(manifestPath, mainFolderPath);
+            manifestContent = File.ReadAllLines(manifestPath);
+            manifestFile = File.ReadAllLines(manifestPath); // Imports manifest data
+            i = 0;
+            projectNames = new List<string>();
+            projectParagraphs = new List<string>();
+            projectFinsihedParagraphs = new List<string>();
+            foreach (string line in manifestFile)
+            {
+                if (i == 0) { }
+                else
+                {
+                    switch (i % 3)
+                    {
+                        case 1:
+                            projectNames.Add(line);
+                            break;
+                        case 2:
+                            projectParagraphs.Add(line);
+                            break;
+                        case 0:
+                            projectFinsihedParagraphs.Add(line);
+                            break;
+                    }
+                }
+                i++;
+            } // End of import
+            break;
+        case "list":
             listProjects(manifestPath);
             break;
-            case "open":
-            if (inputArray.Length < 2) {
+        case "open":
+            if (inputArray.Length < 2)
+            {
                 Console.WriteLine("\nOops, you need to specify a project name after open. Example: open project");
-            } else {
-            openProject(projectNames, projectParagraphs, projectFinsihedParagraphs, inputArray[1]);
+            }
+            else
+            {
+                openProject(projectNames, projectParagraphs, projectFinsihedParagraphs, inputArray[1]);
             }
             break;
-    case "archive":
+        case "archive":
             manifestUpdator(manifestPath, inputArray[1].Trim(), archive: true);
             break;
-    case "unarchive":
-            if (inputArray.Length < 2) {
+        case "unarchive":
+            if (inputArray.Length < 2)
+            {
                 Console.WriteLine("\nOops, you need to specify a project name after open. Example: unarchive project");
             }
-            else {
+            else
+            {
                 projectUnarchive(mainFolderPath, manifestPath, inputArray[1].Trim());
             }
             break;
 
-    case "exit":
-        noExit = false;
-        break;
-} }
+        case "exit":
+            noExit = false;
+            break;
+    }
+}
