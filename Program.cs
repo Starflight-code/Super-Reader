@@ -1,17 +1,5 @@
-﻿// Initial Setup
-// Select folder for all files to be placed in, as well as a preset scheme
-/* Presets may include (Not required, since the only thing in the folder will be historical data. Unless default was used.)
- * - Place all generated files/log files into a seperate folder under the main folder (c://mainfolder/logs) 
- * - Place all generated files/log files into the main folder (c://mainfolder)
- * Enter full folder path to the main folder, or leave blank to use current folder ...
- * Where should output files be placed (1 - seperate folder (within main folder), 2 - main folder)
- * (Only if seperate folder) What should the seperate folder be named? (Leave blank for "Reading History")
- * ** Log file will now be generated in the same folder as the .exe file, for auto-import at launch
- */
-/* Manifest file keeps track of every active project, first line is total active projects.
- * Next lines are project name, total paragraphs in project and paragraphs finished. This then repeats until all projects are documented in the manifest.
- * 
- */
+﻿/* Manifest file keeps track of every active project, first line is total active projects.
+ * Next lines are project name, total paragraphs in project and paragraphs finished. This then repeats until all projects are documented in the manifest. */
 
 string configPath = ".\\config.db";
 string? mainFolderPath = null;
@@ -129,9 +117,6 @@ void manifestUpdator(string manifestPath, string projectName, string newParagrap
             writeToFile.Add(projectFinsihedParagraphs[j]);
         }
         fileWrite(manifestPath, writeToFile.ToArray());
-        /*var manifest = File.WriteAllLinesAsync(manifestPath, writeToFile);
-        manifest.Wait(1000);
-        manifest.Dispose();*/
     }
 }
 void createProject(string manifestPath, string mainFolderPath) {
@@ -157,16 +142,9 @@ void createProject(string manifestPath, string mainFolderPath) {
     }
     string[] append = { projectName, totalParagraphs, "0" }; // projectName, totalParagraphs, paragraphs finished
     fileWrite(manifestPath, append.ToArray(), 'a');
-    /*
-    var m = File.AppendAllLinesAsync(manifestPath, append);
-    m.Wait(500);
-    m.Dispose();*/
     string[] manifestFile = File.ReadAllLines(manifestPath);
     manifestFile[0] = (Int32.Parse(manifestFile[0].Trim()) + 1).ToString(); // Iterates current number of projects
     fileWrite(manifestPath, manifestFile.ToArray());
-    /*var mt = File.WriteAllLinesAsync(manifestPath, manifestFile);
-    mt.Wait(1000);
-    mt.Dispose();*/
     var projectFile = File.Create(mainFolderPath + $"\\{projectName.ToLower()}.txt");
     projectFile.Dispose();
     Console.Clear();
